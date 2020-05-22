@@ -21,9 +21,13 @@ namespace Doctrine\ORM;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Common\Inflector\Inflector as LegacyInflector;
+use Doctrine\Inflector\Inflector;
+use Doctrine\Inflector\InflectorFactory;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ObjectRepository;
+use function class_exists;
+use function lcfirst;
 
 /**
  * An EntityRepository serves as a repository for entities with generic as well as
@@ -54,6 +58,9 @@ class EntityRepository implements ObjectRepository, Selectable
      * @var \Doctrine\ORM\Mapping\ClassMetadata
      */
     protected $_class;
+
+    /** @var Inflector */
+    private static $inflector;
 
     /**
      * Initializes a new <tt>EntityRepository</tt>.
@@ -302,12 +309,31 @@ class EntityRepository implements ObjectRepository, Selectable
             throw ORMException::findByRequiresParameter($method . $by);
         }
 
-        $fieldName = lcfirst(Inflector::classify($by));
+        $fieldName = lcfirst($this->classify($by));
 
         if (! ($this->_class->hasField($fieldName) || $this->_class->hasAssociation($fieldName))) {
             throw ORMException::invalidMagicCall($this->_entityName, $fieldName, $method . $by);
         }
 
         return $this->$method([$fieldName => $arguments[0]], ...array_slice($arguments, 1));
+    }
+
+    /**
+     * @param string $word
+     *
+     * @return string
+     */
+    private function classify($word)
+    {
+        if (class_exists(InflectorFactory::class)) {
+            if (self::$inflector === null)
+            {
+                self::$inflector = InflectorFactory::create()->build();
+            }
+
+            return self::$inflector->classify($word);
+        }
+
+        return LegacyInflector::classify($word);
     }
 }

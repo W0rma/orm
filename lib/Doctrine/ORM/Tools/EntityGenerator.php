@@ -20,10 +20,13 @@
 namespace Doctrine\ORM\Tools;
 
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Common\Inflector\Inflector as LegacyInflector;
+use Doctrine\Inflector\Inflector;
+use Doctrine\Inflector\InflectorFactory;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use const E_USER_DEPRECATED;
+use function class_exists;
 use function str_replace;
 use function trigger_error;
 use function var_export;
@@ -335,6 +338,9 @@ public function __construct(<params>)
 }
 ';
 
+    /** @var Inflector */
+    protected $inflector;
+
     /**
      * Constructor.
      */
@@ -344,6 +350,10 @@ public function __construct(<params>)
 
         if (version_compare(\Doctrine\Common\Version::VERSION, '2.2.0-DEV', '>=')) {
             $this->annotationsPrefix = 'ORM\\';
+        }
+
+        if (class_exists(InflectorFactory::class)) {
+            $this->inflector = InflectorFactory::create()->build();
         }
     }
 
@@ -1377,11 +1387,11 @@ public function __construct(<params>)
      */
     protected function generateEntityStubMethod(ClassMetadataInfo $metadata, $type, $fieldName, $typeHint = null, $defaultValue = null)
     {
-        $methodName = $type . Inflector::classify($fieldName);
-        $variableName = Inflector::camelize($fieldName);
+        $methodName = $type . $this->classify($fieldName);
+        $variableName = $this->camelize($fieldName);
         if (in_array($type, ["add", "remove"])) {
-            $methodName = Inflector::singularize($methodName);
-            $variableName = Inflector::singularize($variableName);
+            $methodName = $this->singularize($methodName);
+            $variableName = $this->singularize($variableName);
         }
 
         if ($this->hasMethod($methodName, $metadata)) {
@@ -1911,5 +1921,47 @@ public function __construct(<params>)
         }
 
         return implode(',', $optionsStr);
+    }
+
+    /**
+     * @param string $word
+     *
+     * @return string
+     */
+    private function camelize($word)
+    {
+        if ($this->inflector !== null) {
+            return $this->inflector->camelize($word);
+        }
+
+        return LegacyInflector::camelize($word);
+    }
+
+    /**
+     * @param string $word
+     *
+     * @return string
+     */
+    private function classify($word)
+    {
+        if ($this->inflector !== null) {
+            return $this->inflector->classify($word);
+        }
+
+        return LegacyInflector::classify($word);
+    }
+
+    /**
+     * @param string $word
+     * 
+     * @return string
+     */
+    private function singularize($word)
+    {
+        if ($this->inflector !== null) {
+            return $this->inflector->singularize($word);
+        }
+
+        return LegacyInflector::singularize($word);
     }
 }

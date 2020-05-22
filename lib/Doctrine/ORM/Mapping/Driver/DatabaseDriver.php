@@ -19,7 +19,9 @@
 
 namespace Doctrine\ORM\Mapping\Driver;
 
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Common\Inflector\Inflector as LegacyInflector;
+use Doctrine\Inflector\Inflector;
+use Doctrine\Inflector\InflectorFactory;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
@@ -29,6 +31,7 @@ use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Doctrine\ORM\Mapping\MappingException;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
+use function class_exists;
 use function interface_exists;
 use function preg_replace;
 
@@ -80,12 +83,19 @@ class DatabaseDriver implements MappingDriver
      */
     private $namespace;
 
+    /** @var Inflector */
+    private $inflector;
+
     /**
      * @param AbstractSchemaManager $schemaManager
      */
     public function __construct(AbstractSchemaManager $schemaManager)
     {
         $this->_sm = $schemaManager;
+
+        if (class_exists(InflectorFactory::class)) {
+            $this->inflector = InflectorFactory::create()->build();
+        }
     }
 
     /**
@@ -528,7 +538,7 @@ class DatabaseDriver implements MappingDriver
             return $this->namespace . $this->classNamesForTables[$tableName];
         }
 
-        return $this->namespace . Inflector::classify(strtolower($tableName));
+        return $this->namespace . $this->classify(strtolower($tableName));
     }
 
     /**
@@ -553,7 +563,35 @@ class DatabaseDriver implements MappingDriver
             $columnName = preg_replace('/_id$/', '', $columnName);
         }
 
-        return Inflector::camelize($columnName);
+        return $this->camelize($columnName);
+    }
+
+    /**
+     * @param string $word
+     *
+     * @return string
+     */
+    private function camelize($word)
+    {
+        if ($this->inflector !== null) {
+            return $this->inflector->camelize($word);
+        }
+
+        return LegacyInflector::camelize($word);
+    }
+
+    /**
+     * @param string $word
+     *
+     * @return string
+     */
+    private function classify($word)
+    {
+        if ($this->inflector !== null) {
+            return $this->inflector->classify($word);
+        }
+
+        return LegacyInflector::classify($word);
     }
 }
 

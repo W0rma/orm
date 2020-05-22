@@ -20,9 +20,11 @@
 namespace Doctrine\ORM\Tools;
 
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Common\Inflector\Inflector as LegacyInflector;
+use Doctrine\Inflector\InflectorFactory;
 use Doctrine\DBAL\Types\Type;
 use Symfony\Component\Yaml\Yaml;
+use function class_exists;
 
 /**
  * Class to help with converting Doctrine 1 schema files to Doctrine 2 mapping files
@@ -291,6 +293,11 @@ class ConvertDoctrine1Schema
             return;
         }
 
+        $inflector = null;
+        if (class_exists(InflectorFactory::class)) {
+            $inflector = InflectorFactory::create()->build();
+        }
+
         foreach ($model['relations'] as $name => $relation) {
             if ( ! isset($relation['alias'])) {
                 $relation['alias'] = $name;
@@ -299,7 +306,11 @@ class ConvertDoctrine1Schema
                 $relation['class'] = $name;
             }
             if ( ! isset($relation['local'])) {
-                $relation['local'] = Inflector::tableize($relation['class']);
+                if ($inflector === null) {
+                    $relation['local'] = LegacyInflector::tableize($relation['class']);
+                } else {
+                    $relation['local'] = $inflector->tabelize($relation['class']);
+                }
             }
             if ( ! isset($relation['foreign'])) {
                 $relation['foreign'] = 'id';
