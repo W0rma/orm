@@ -19,6 +19,7 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\Utility\PersisterHelper;
 
 use function array_fill;
+use function array_merge;
 use function array_pop;
 use function assert;
 use function count;
@@ -248,9 +249,16 @@ class ManyToManyPersister extends AbstractCollectionPersister
             if ($value === null && ($operator === Comparison::EQ || $operator === Comparison::NEQ)) {
                 $whereClauses[] = sprintf('te.%s %s NULL', $field, $operator === Comparison::EQ ? 'IS' : 'IS NOT');
             } else {
-                $whereClauses[] = sprintf('te.%s %s ?', $field, $operator);
-                $params[]       = $value;
-                $paramTypes[]   = PersisterHelper::getTypeOfField($name, $targetClass, $this->em)[0];
+                if ($operator === Comparison::IN) {
+                    $whereClauses[] = sprintf('te.%s IN (?)', $field);
+                } elseif ($operator === Comparison::NIN) {
+                    $whereClauses[] = sprintf('te.%s NOT IN (?)', $field);
+                } else {
+                    $whereClauses[] = sprintf('te.%s %s ?', $field, $operator);
+                }
+
+                $params     = array_merge($params, PersisterHelper::convertToParameterValue($value, $this->em));
+                $paramTypes = array_merge($paramTypes, PersisterHelper::inferParameterTypes($name, $value, $targetClass, $this->em));
             }
         }
 

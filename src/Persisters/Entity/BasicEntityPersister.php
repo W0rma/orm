@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Doctrine\ORM\Persisters\Entity;
 
-use BackedEnum;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\Common\Collections\Order;
@@ -31,7 +30,6 @@ use Doctrine\ORM\Persisters\Exception\InvalidOrientation;
 use Doctrine\ORM\Persisters\Exception\UnrecognizedField;
 use Doctrine\ORM\Persisters\SqlExpressionVisitor;
 use Doctrine\ORM\Persisters\SqlValueVisitor;
-use Doctrine\ORM\Proxy\DefaultProxyClassNameResolver;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\QueryException;
 use Doctrine\ORM\Query\ResultSetMapping;
@@ -53,7 +51,6 @@ use function assert;
 use function count;
 use function implode;
 use function is_array;
-use function is_object;
 use function reset;
 use function spl_object_id;
 use function sprintf;
@@ -349,7 +346,7 @@ class BasicEntityPersister implements EntityPersister
         $types = [];
 
         foreach ($id as $field => $value) {
-            $types = [...$types, ...$this->getTypes($field, $value, $versionedClass)];
+            $types = [...$types, ...PersisterHelper::inferParameterTypes($field, $value, $versionedClass, $this->em)];
         }
 
         return $types;
@@ -915,8 +912,8 @@ class BasicEntityPersister implements EntityPersister
                 continue;
             }
 
-            $sqlParams = [...$sqlParams, ...$this->getValues($value)];
-            $sqlTypes  = [...$sqlTypes, ...$this->getTypes($field, $value, $this->class)];
+            $sqlParams = [...$sqlParams, ...PersisterHelper::convertToParameterValue($value, $this->em)];
+            $sqlTypes  = [...$sqlTypes, ...PersisterHelper::inferParameterTypes($field, $value, $this->class, $this->em)];
         }
 
         return [$sqlParams, $sqlTypes];
@@ -1861,8 +1858,8 @@ class BasicEntityPersister implements EntityPersister
                 continue; // skip null values.
             }
 
-            $types  = [...$types, ...$this->getTypes($field, $value, $this->class)];
-            $params = array_merge($params, $this->getValues($value));
+            $types  = [...$types, ...PersisterHelper::inferParameterTypes($field, $value, $this->class, $this->em)];
+            $params = array_merge($params, PersisterHelper::convertToParameterValue($value, $this->em));
         }
 
         return [$params, $types];
@@ -1890,8 +1887,8 @@ class BasicEntityPersister implements EntityPersister
                 continue; // skip null values.
             }
 
-            $types  = [...$types, ...$this->getTypes($criterion['field'], $criterion['value'], $criterion['class'])];
-            $params = array_merge($params, $this->getValues($criterion['value']));
+            $types  = array_merge($types, PersisterHelper::inferParameterTypes($criterion['field'], $criterion['value'], $criterion['class'], $this->em));
+            $params = array_merge($params, PersisterHelper::convertToParameterValue($criterion['value'], $this->em));
         }
 
         return [$params, $types];

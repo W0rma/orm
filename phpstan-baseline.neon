@@ -1993,18 +1993,6 @@ parameters:
 			path: src/Persisters/Entity/BasicEntityPersister.php
 
 		-
-			message: '#^Method Doctrine\\ORM\\Persisters\\Entity\\BasicEntityPersister\:\:expandCriteriaParameters\(\) should return array\{list\<mixed\>, list\<Doctrine\\DBAL\\ArrayParameterType\:\:ASCII\|Doctrine\\DBAL\\ArrayParameterType\:\:BINARY\|Doctrine\\DBAL\\ArrayParameterType\:\:INTEGER\|Doctrine\\DBAL\\ArrayParameterType\:\:STRING\|Doctrine\\DBAL\\ParameterType\:\:ASCII\|Doctrine\\DBAL\\ParameterType\:\:BINARY\|Doctrine\\DBAL\\ParameterType\:\:BOOLEAN\|Doctrine\\DBAL\\ParameterType\:\:INTEGER\|Doctrine\\DBAL\\ParameterType\:\:LARGE_OBJECT\|Doctrine\\DBAL\\ParameterType\:\:NULL\|Doctrine\\DBAL\\ParameterType\:\:STRING\|string\>\} but returns array\{array\<mixed\>, list\<Doctrine\\DBAL\\ArrayParameterType\:\:ASCII\|Doctrine\\DBAL\\ArrayParameterType\:\:BINARY\|Doctrine\\DBAL\\ArrayParameterType\:\:INTEGER\|Doctrine\\DBAL\\ArrayParameterType\:\:STRING\|Doctrine\\DBAL\\ParameterType\:\:ASCII\|Doctrine\\DBAL\\ParameterType\:\:BINARY\|Doctrine\\DBAL\\ParameterType\:\:BOOLEAN\|Doctrine\\DBAL\\ParameterType\:\:INTEGER\|Doctrine\\DBAL\\ParameterType\:\:LARGE_OBJECT\|Doctrine\\DBAL\\ParameterType\:\:NULL\|Doctrine\\DBAL\\ParameterType\:\:STRING\|string\>\}\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Persisters/Entity/BasicEntityPersister.php
-
-		-
-			message: '#^Method Doctrine\\ORM\\Persisters\\Entity\\BasicEntityPersister\:\:expandParameters\(\) should return array\{list\<mixed\>, list\<Doctrine\\DBAL\\ArrayParameterType\:\:ASCII\|Doctrine\\DBAL\\ArrayParameterType\:\:BINARY\|Doctrine\\DBAL\\ArrayParameterType\:\:INTEGER\|Doctrine\\DBAL\\ArrayParameterType\:\:STRING\|Doctrine\\DBAL\\ParameterType\:\:ASCII\|Doctrine\\DBAL\\ParameterType\:\:BINARY\|Doctrine\\DBAL\\ParameterType\:\:BOOLEAN\|Doctrine\\DBAL\\ParameterType\:\:INTEGER\|Doctrine\\DBAL\\ParameterType\:\:LARGE_OBJECT\|Doctrine\\DBAL\\ParameterType\:\:NULL\|Doctrine\\DBAL\\ParameterType\:\:STRING\|string\>\} but returns array\{array\<mixed\>, list\<Doctrine\\DBAL\\ArrayParameterType\:\:ASCII\|Doctrine\\DBAL\\ArrayParameterType\:\:BINARY\|Doctrine\\DBAL\\ArrayParameterType\:\:INTEGER\|Doctrine\\DBAL\\ArrayParameterType\:\:STRING\|Doctrine\\DBAL\\ParameterType\:\:ASCII\|Doctrine\\DBAL\\ParameterType\:\:BINARY\|Doctrine\\DBAL\\ParameterType\:\:BOOLEAN\|Doctrine\\DBAL\\ParameterType\:\:INTEGER\|Doctrine\\DBAL\\ParameterType\:\:LARGE_OBJECT\|Doctrine\\DBAL\\ParameterType\:\:NULL\|Doctrine\\DBAL\\ParameterType\:\:STRING\|string\>\}\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Persisters/Entity/BasicEntityPersister.php
-
-		-
 			message: '#^Method Doctrine\\ORM\\Persisters\\Entity\\BasicEntityPersister\:\:expandToManyParameters\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2041,12 +2029,6 @@ parameters:
 			path: src/Persisters/Entity/BasicEntityPersister.php
 
 		-
-			message: '#^Method Doctrine\\ORM\\Persisters\\Entity\\BasicEntityPersister\:\:getIndividualValue\(\) should return list\<mixed\> but returns array\<mixed\>\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Persisters/Entity/BasicEntityPersister.php
-
-		-
 			message: '#^Method Doctrine\\ORM\\Persisters\\Entity\\BasicEntityPersister\:\:getSelectColumnAssociationSQL\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
 			identifier: missingType.generics
 			count: 1
@@ -2058,6 +2040,29 @@ parameters:
 			count: 1
 			path: src/Persisters/Entity/BasicEntityPersister.php
 
+		-
+			message: '#^Method Doctrine\\ORM\\Persisters\\Entity\\BasicEntityPersister\:\:getSelectConditionStatementColumnSQL\(\) has parameter \$assoc with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 5
+			path: src/Persisters/Entity/BasicEntityPersister.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Persisters\\Entity\\BasicEntityPersister\:\:getSelectConditionStatementSQL\(\) has parameter \$assoc with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 5
+			path: src/Persisters/Entity/BasicEntityPersister.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Persisters\\Entity\\BasicEntityPersister\:\:getSelectManyToManyJoinSQL\(\) has parameter \$manyToMany with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 5
+			path: src/Persisters/Entity/BasicEntityPersister.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Persisters\\Entity\\BasicEntityPersister\:\:getSelectSQL\(\) has parameter \$assoc with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 5
+			path: src/Persisters/Entity/BasicEntityPersister.php
 		-
 			message: '#^Method Doctrine\\ORM\\Persisters\\Entity\\BasicEntityPersister\:\:getTypes\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
 			identifier: missingType.generics
@@ -3423,5 +3428,29 @@ parameters:
 		-
 			message: '#^Method Doctrine\\ORM\\Utility\\PersisterHelper\:\:getTypeOfField\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
 			identifier: missingType.generics
+			count: 1
+			path: src/Utility/PersisterHelper.php
+
+		-
+			message: '#^Method Doctrine\\ORM\\Utility\\PersisterHelper\:\:inferParameterTypes\(\) has parameter \$class with generic class Doctrine\\ORM\\Mapping\\ClassMetadata but does not specify its types\: T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Utility/PersisterHelper.php
+
+		-
+			message: '#^Offset ''joinTable'' might not exist on array\{cache\?\: array, cascade\: array\<string\>, declared\?\: class\-string, fetch\: mixed, fieldName\: string, id\?\: bool, inherited\?\: class\-string, indexBy\?\: string, \.\.\.\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Utility/PersisterHelper.php
+
+		-
+			message: '#^Offset ''relationToTargetKeyColumns'' might not exist on array\{cache\?\: array, cascade\: array\<string\>, declared\?\: class\-string, fetch\: mixed, fieldName\: string, id\?\: bool, inherited\?\: class\-string, indexBy\?\: string, \.\.\.\}\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: src/Utility/PersisterHelper.php
+
+		-
+			message: '#^Offset ''sourceToTargetKeyColumns'' might not exist on array\{cache\?\: array, cascade\: array\<string\>, declared\?\: class\-string, fetch\: mixed, fieldName\: string, id\?\: bool, inherited\?\: class\-string, indexBy\?\: string, \.\.\.\}\.$#'
+			identifier: offsetAccess.notFound
 			count: 1
 			path: src/Utility/PersisterHelper.php
